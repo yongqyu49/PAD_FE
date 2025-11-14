@@ -1,7 +1,7 @@
 # PAD - 커뮤니티 게시판 플랫폼
 
-PAD는 React 기반의 프론트엔드로 구성된 커뮤니티 게시판 플랫폼입니다.
-(테스트용 Express 백엔드 포함)
+PAD는 React 기반의 프론트엔드와 Express 기반의 백엔드로 구성된 커뮤니티 게시판 플랫폼입니다.
+**단일 URL로 통합 배포 가능**합니다.
 
 ## 📋 프로젝트 개요
 
@@ -59,10 +59,12 @@ PAD_FE/
 │   │   └── index.js       # 진입점
 │   └── package.json
 │
-└── node_server/           # Node.js 백엔드
-    ├── server.js          # 서버 메인 파일
-    ├── image/             # 업로드된 이미지
-    └── package.json
+├── node_server/           # Node.js 백엔드
+│   ├── server.js          # 서버 메인 파일
+│   ├── image/             # 업로드된 이미지
+│   └── package.json
+│
+└── deploy.sh              # 통합 배포 스크립트
 ```
 
 ## 🚀 설치 및 실행 방법
@@ -80,17 +82,29 @@ git clone https://github.com/yongqyu49/PAD_FE.git
 cd PAD_FE
 ```
 
-### 2. 프론트엔드 설정 및 실행
+## 실행 모드
+
+### ⚡ 빠른 시작 (단일 URL 배포)
+
+**가장 쉬운 방법**: 배포 스크립트를 사용하여 프론트엔드와 백엔드를 하나의 URL로 실행
 
 ```bash
-cd pad
-npm install
-npm start
+chmod +x deploy.sh
+./deploy.sh
 ```
 
-프론트엔드는 기본적으로 `http://localhost:3000`에서 실행됩니다.
+이 스크립트는 자동으로:
+1. 프론트엔드 의존성을 설치하고 빌드
+2. 백엔드 의존성을 설치
+3. 백엔드 서버를 시작하여 `http://localhost:7223`에서 실행
 
-### 3. 백엔드 설정 및 실행
+서버가 시작되면 브라우저에서 `http://localhost:7223`으로 접속하세요.
+
+### 개발 모드 (Development)
+
+개발 중에는 프론트엔드와 백엔드를 별도로 실행합니다.
+
+#### 2-1. 백엔드 설정 및 실행
 
 ```bash
 cd node_server
@@ -100,22 +114,53 @@ npm start
 
 백엔드 서버는 기본적으로 포트 `7223`에서 실행됩니다.
 
-### 4. 환경 설정
+#### 2-2. 프론트엔드 설정 및 실행
 
-#### 프론트엔드 (pad)
-프론트엔드는 프록시 설정을 통해 백엔드 API와 통신합니다.
-`package.json`에서 프록시 설정을 확인하세요:
-
-```json
-"proxy": "http://1.209.148.143:8800"
+```bash
+cd pad
+npm install
+npm start
 ```
 
-필요에 따라 로컬 백엔드 서버 주소로 변경하세요.
+프론트엔드는 기본적으로 `http://localhost:3000`에서 실행됩니다.
+프론트엔드는 프록시 설정을 통해 백엔드 API와 통신합니다.
+
+### 프로덕션 모드 (Production) - 수동 배포
+
+프로덕션 환경에서 수동으로 배포하려면:
+
+#### 3-1. 프론트엔드 빌드
+
+```bash
+cd pad
+npm install
+npm run build
+```
+
+이 명령은 최적화된 프로덕션 빌드를 `pad/build` 폴더에 생성합니다.
+
+#### 3-2. 백엔드 서버 실행
+
+```bash
+cd node_server
+npm install
+npm start
+```
+
+백엔드 서버가 `http://localhost:7223`에서 실행되며, React 앱도 동일한 URL에서 제공됩니다.
+
+**주의**: React 빌드가 완료되어야 하나의 URL로 접근할 수 있습니다.
+
+### 4. 환경 설정
 
 #### 백엔드 (node_server)
 - MySQL 데이터베이스 연결 설정
 - 이미지 저장 경로 설정
 - 포트 설정 (기본값: 7223)
+
+#### 프론트엔드 개발 모드 (pad)
+개발 모드에서는 `src/setupProxy.js`에서 프록시 설정을 확인하세요.
+로컬 백엔드 서버 주소를 설정할 수 있습니다.
 
 ## 📝 사용 가능한 스크립트
 
